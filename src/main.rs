@@ -1,4 +1,8 @@
-use std::{fs::File, io::Read};
+use std::{cell::RefCell, rc::Rc};
+
+use linefeed::{Interface, ReadResult};
+
+use crate::object::Object;
 
 mod env;
 mod eval;
@@ -6,14 +10,37 @@ mod lexer;
 mod object;
 mod parser;
 
-fn main() -> std::io::Result<()> {
-    let mut f = File::open("src/test.ls")?;
-    let mut input = String::new();
-    f.read_to_string(&mut input)?;
+const PROMPT: &str = "lisp-rs>";
 
-    let tokens = lexer::tokenize(&input).unwrap();
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let reader = Interface::new(PROMPT).unwrap();
+    let mut env = Rc::new(RefCell::new(env::Env::new()));
 
-    println!("{:#?}", tokens);
+    reader.set_prompt(&format!("{}", PROMPT)).unwrap();
 
+    while let ReadResult::Input(input) = reader.read_line().unwrap() {
+        if input.eq("exit") {
+            break;
+        }
+        let val = eval::eval(&input, &mut env)?;
+        match val {
+            Object::Void => {}
+            Object::Integer(n) => println!("{}", n),
+            Object::Bool(b) => println!("{}", b),
+            Object::Symbol(s) => println!("{}", s),
+            Object::Lambda(params, body) => {
+                println!("Lambda(");
+                for param in params {
+                    println!("{} ", param);
+                }
+                println!(")");
+                for expr in body {
+                    println!(" {}", expr);
+                }
+            }
+            _ => println!("{}", val),
+        }
+    }
+    println!("Good bye");
     Ok(())
 }

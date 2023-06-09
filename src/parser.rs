@@ -1,5 +1,5 @@
 use crate::{
-    lexer::{tokenize, Token, TokenError},
+    lexer::{tokenize, Token},
     object::Object,
 };
 

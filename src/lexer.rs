@@ -2,8 +2,6 @@
 pub enum Token {
     Integer(i64),
     Symbol(String),
-    // Ident(String),
-    // Keyword(Keyword),
     OpenParen,
     CloseParen,
 }
@@ -13,8 +11,6 @@ impl std::fmt::Display for Token {
         match self {
             Token::Integer(n) => write!(f, "{}", n),
             Token::Symbol(s) => write!(f, "{}", s),
-            // Token::Ident(i) => write!(f, "{}", i),
-            // Token::Keyword(k) => write!(f, "{}", k),
             Token::OpenParen => write!(f, "("),
             Token::CloseParen => write!(f, ")"),
         }
@@ -88,71 +84,5 @@ fn lex_string(string: &str) -> Token {
         Token::Integer(i)
     } else {
         Token::Symbol(string.to_string())
-        // match string {
-        //     "+" => Token::Symbol(Symbol::Add),
-        //     "-" => Token::Symbol(Symbol::Sub),
-        //     "*" => Token::Symbol(Symbol::Mul),
-        //     "/" => Token::Symbol(Symbol::Div),
-        //     "def" => Token::Keyword(Keyword::Def),
-        //     "set" => Token::Keyword(Keyword::Set),
-        //     _ => Token::Ident(string.to_string()),
-        // }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_add() {
-        let tokens = tokenize("(+ 1 2)").unwrap();
-        assert_eq!(
-            tokens,
-            vec![
-                Token::OpenParen,
-                // Token::Symbol(Symbol::Add),
-                Token::Integer(1),
-                Token::Integer(2),
-                Token::CloseParen
-            ]
-        )
-    }
-    #[test]
-    fn test_area_of_a_circle() {
-        let program = "
-            (
-                (def r 10)
-                (def pi 314)
-                (* pi (* r r))
-            )
-        ";
-        let tokens = tokenize(program).unwrap_or(vec![]);
-        assert_eq!(
-            tokens,
-            vec![
-                Token::OpenParen,
-                Token::OpenParen,
-                // Token::Keyword(Keyword::Def),
-                // Token::Ident("r".to_string()),
-                Token::Integer(10),
-                Token::CloseParen,
-                Token::OpenParen,
-                // Token::Keyword(Keyword::Def),
-                // Token::Ident("pi".to_string()),
-                Token::Integer(314),
-                Token::CloseParen,
-                Token::OpenParen,
-                // Token::Symbol(Symbol::Mul),
-                // Token::Ident("pi".to_string()),
-                Token::OpenParen,
-                // Token::Symbol(Symbol::Mul),
-                // Token::Ident("r".to_string()),
-                // Token::Ident("r".to_string()),
-                Token::CloseParen,
-                Token::CloseParen,
-                Token::CloseParen
-            ]
-        );
     }
 }
